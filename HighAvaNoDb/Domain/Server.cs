@@ -5,8 +5,11 @@ namespace HighAvaNoDb.Domain
 {
     public partial class Server : AggregateRoot, IEqualityComparer<Server>
     {
+        //not null
         public string ShardName { set; get; }
+        //not null
         public string Host { set; get; }
+        //not null
         public int Port { set; get; }
         public string paramStr { set; get; }
         public bool IsAlive { set; get; }

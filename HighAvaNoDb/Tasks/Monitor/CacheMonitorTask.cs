@@ -4,6 +4,7 @@ using HighAvaNoDb.Infrastructure.Exceptions;
 using HighAvaNoDb.Repository;
 using log4net;
 using System;
+using ZooKeeperNet;
 
 namespace HighAvaNoDb.Tasks.Monitor
 {
@@ -100,9 +101,13 @@ namespace HighAvaNoDb.Tasks.Monitor
                 failTimes = 0;
                 reInit();
             }
-            catch (Exception e)
+            catch (KeeperException ex)
             {
-                logger.Error(string.Format("[Monitor]error [{0}:{1}]", host, port), e);
+                
+            }
+            catch (Exception ex)
+            {
+                logger.Error(string.Format("[Monitor]error [{0}:{1}]", host, port), ex);
                 ++failTimes;
             }
             finally

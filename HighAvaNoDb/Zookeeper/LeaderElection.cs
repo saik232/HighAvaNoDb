@@ -62,8 +62,8 @@ namespace HighAvaNoDb.Zookeeper
 			foreach (string name in names) {
 				if (name.StartsWith(prefix)) {
 					id = name;
-					if (LOG.IsDebugEnabled) {
-						LOG.DebugFormat("Found id created last time: {0}", id);
+					if (log.IsDebugEnabled) {
+						log.DebugFormat("Found id created last time: {0}", id);
 					}
 				}
 			}
@@ -71,8 +71,8 @@ namespace HighAvaNoDb.Zookeeper
 			if (id == null) {
 				id = Zookeeper.Create(groupPath.Combine(prefix), data, Acl, CreateMode.EphemeralSequential);
 
-				if (LOG.IsDebugEnabled) {
-					LOG.DebugFormat("Created id: {0}", id);
+				if (log.IsDebugEnabled) {
+					log.DebugFormat("Created id: {0}", id);
 				}
 			}
 
@@ -157,8 +157,9 @@ namespace HighAvaNoDb.Zookeeper
 		}
 
 		public void Start() {
-            //EnsurePathExists(groupPath);
-            EnsureExists(groupPath, null, Acl, CreateMode.Ephemeral);
+            //Ephemeral node can't have child node
+            EnsurePathExists(groupPath);
+            //EnsureExists(groupPath, null, Acl, CreateMode.Ephemeral);
             RetryOperation(RunForLeader);
 		}
 

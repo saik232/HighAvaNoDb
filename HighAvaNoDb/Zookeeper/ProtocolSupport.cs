@@ -10,10 +10,10 @@ namespace HighAvaNoDb.Zookeeper
 {
     public abstract class ProtocolSupport : IDisposable
     {
-        protected static readonly ILog LOG = LogManager.GetLogger(typeof(ProtocolSupport));
+        protected static readonly ILog log = LogManager.GetLogger(typeof(ProtocolSupport));
 
         private int closed;
-        
+
         public ProtocolSupport(IZooKeeper zookeeper)
         {
             RetryDelay = new TimeSpan(0, 0, 0, 0, 500);
@@ -47,21 +47,21 @@ namespace HighAvaNoDb.Zookeeper
                 }
                 catch (KeeperException.SessionExpiredException e)
                 {
-                    LOG.WarnFormat("Session expired for: {0} so reconnecting due to: {1} {2}",Zookeeper,e, e.StackTrace);
+                    log.WarnFormat("Session expired for: {0} so reconnecting due to: {1} {2}", Zookeeper, e, e.StackTrace);
                     throw e;
                 }
                 catch (KeeperException.ConnectionLossException e)
                 {
                     if (exception == null)
                         exception = e;
-                    LOG.DebugFormat("Attempt {0} failed with connection loss so attempting to reconnect: {1} {2}", e, e.StackTrace);
+                    log.DebugFormat("Attempt {0} failed with connection loss so attempting to reconnect: {1} {2}", e, e.StackTrace);
                     DoRetryDelay(i);
                 }
                 catch (TimeoutException e)
                 {
                     if (exception == null)
                         exception = KeeperException.Create(KeeperException.Code.OPERATIONTIMEOUT);
-                    LOG.DebugFormat("Attempt {0} failed with connection loss so attempting to reconnect: {1} {2}", e, e.StackTrace);
+                    log.DebugFormat("Attempt {0} failed with connection loss so attempting to reconnect: {1} {2}", e, e.StackTrace);
                     DoRetryDelay(i);
                 }
             }
@@ -91,12 +91,12 @@ namespace HighAvaNoDb.Zookeeper
                 var components = path.Split(PathUtils.PathSeparatorCharAsArray, StringSplitOptions.RemoveEmptyEntries);
                 var pathBuilder = new StringBuilder(path.Length);
 
-                for (var i=0; i < components.Length; ++i)
+                for (var i = 0; i < components.Length; ++i)
                 {
                     // Create a loop-scoped variable to avoid closure troubles
                     // inside RetryOperation.
                     var isLastComponent = (i == components.Length - 1);
-                    
+
                     var component = components[i];
 
                     pathBuilder.Append(PathUtils.PathSeparator);
@@ -117,11 +117,11 @@ namespace HighAvaNoDb.Zookeeper
             }
             catch (KeeperException e)
             {
-                LOG.WarnFormat("Caught: {0} {1}", e, e.StackTrace);
+                log.WarnFormat("Caught: {0} {1}", e, e.StackTrace);
             }
             catch (ThreadInterruptedException e)
             {
-                LOG.WarnFormat("Caught: {0} {1}", e, e.StackTrace);
+                log.WarnFormat("Caught: {0} {1}", e, e.StackTrace);
             }
         }
 
@@ -131,7 +131,7 @@ namespace HighAvaNoDb.Zookeeper
          */
         protected bool IsDisposed()
         {
-            return Interlocked.CompareExchange(ref closed,0,0) == 1;
+            return Interlocked.CompareExchange(ref closed, 0, 0) == 1;
         }
 
         /**
@@ -148,7 +148,7 @@ namespace HighAvaNoDb.Zookeeper
                 }
                 catch (ThreadInterruptedException e)
                 {
-                    LOG.WarnFormat("Failed to sleep: {0} {1}", e, e.StackTrace);
+                    log.WarnFormat("Failed to sleep: {0} {1}", e, e.StackTrace);
                 }
             }
         }

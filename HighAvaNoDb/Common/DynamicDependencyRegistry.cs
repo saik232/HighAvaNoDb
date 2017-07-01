@@ -1,5 +1,7 @@
 ﻿using Autofac;
 using HighAvaNoDb.Services;
+using System;
+using ZooKeeperNet;
 
 namespace HighAvaNoDb.Common
 {
@@ -13,9 +15,16 @@ namespace HighAvaNoDb.Common
         {
             this.builder = builder;
         }
-        public void RegistryPerServer(object tag)
+        public void RegisterPerServer(object tag)
         {
             builder.RegisterType<RegistryZkService>().As<IRegistryZkService>().InstancePerMatchingLifetimeScope(tag);
+        }
+
+        public void RegisterZooKeeper(string connectstring, TimeSpan sessionTimeout)
+        {
+            builder.RegisterType<ZooKeeper>().As<IZooKeeper>().WithParameter("connectstring", connectstring)
+                .WithParameter("sessionTimeout", sessionTimeout)
+                .Keyed<IZooKeeper>("global_zk").InstancePerLifetimeScope();
         }
     }
 }

@@ -5,15 +5,16 @@ using HighAvaNoDb.EventStorage;
 
 namespace HighAvaNoDb.Repository
 {
+    /// <summary>
+    /// ServerInst repository
+    /// </summary>
     public class ServerInstRepository : IServerInstRepository
     {
-        private readonly IEventStorage storage;
         private static object _lockStorage = new object();
         private ServerInstances serverInstances;
 
-        public ServerInstRepository(IEventStorage storage, ServerInstances serverInstances)
+        public ServerInstRepository( ServerInstances serverInstances)
         {
-            this.storage = storage;
             this.serverInstances = serverInstances;
         }
 

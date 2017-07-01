@@ -7,6 +7,9 @@ using HighAvaNoDb.Domain;
 
 namespace HighAvaNoDb.EventStorage
 {
+    /// <summary>
+    /// Events store in Memory
+    /// </summary>
     public class InMemoryEventStorage:IEventStorage
     {
         private List<BaseMemento> mementos;

@@ -77,7 +77,7 @@
     <Compile Include="Commands\UnRegisterZkCommand.cs" />
     <Compile Include="Commands\SlaveOfCommand.cs" />
     <Compile Include="Common\HAContext.cs" />
-    <Compile Include="Configuration\CacheConfig.cs" />
+    <Compile Include="Configuration\HAConfig.cs" />
     <Compile Include="Configuration\IParser.cs" />
     <Compile Include="Configuration\ParameterParser.cs" />
     <Compile Include="Domain\AggregateRoot.cs" />

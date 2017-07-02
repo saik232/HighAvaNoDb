@@ -1,4 +1,5 @@
 ﻿using Autofac;
+using HighAvaNoDb.Configuration;
 using HighAvaNoDb.Infrastructure.DependencyManagement;
 using HighAvaNoDb.ServiceBus;
 using log4net;
@@ -31,6 +32,8 @@ namespace HighAvaNoDb.Common
         #endregion
 
         #region Properties
+        public HAConfig Config;
+
         /// <summary>
         /// Return the instance
         /// </summary>

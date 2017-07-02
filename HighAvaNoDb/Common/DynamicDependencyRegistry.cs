@@ -8,6 +8,7 @@ namespace HighAvaNoDb.Common
     /// <summary>
     /// delay MatchingLifetimeScope registry
     /// </summary>
+    [Obsolete("Will be removed in future")]
     public class DynamicDependencyRegistry
     {
         private ContainerBuilder builder;
@@ -25,6 +26,10 @@ namespace HighAvaNoDb.Common
             builder.RegisterType<ZooKeeper>().As<IZooKeeper>().WithParameter("connectstring", connectstring)
                 .WithParameter("sessionTimeout", sessionTimeout)
                 .Keyed<IZooKeeper>("global_zk").InstancePerLifetimeScope();
+        }
+
+        public void UpdateContainer()
+        {
         }
     }
 }

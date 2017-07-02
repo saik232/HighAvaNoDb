@@ -28,15 +28,6 @@ namespace HighAvaNoDb.Infrastructure.DependencyManagement
         }
 
         /// <summary>
-        /// Re build container
-        /// </summary>
-        /// <returns></returns>
-        public IContainer ReBuildContainer()
-        {
-           return builder.Build();
-        }
-
-        /// <summary>
         /// Call only first delegate
         /// </summary>
         public void DependencyRegistry()
@@ -84,6 +75,25 @@ namespace HighAvaNoDb.Infrastructure.DependencyManagement
                 return scope.Resolve<T>();
             }
             return scope.ResolveKeyed<T>(key);
+        }
+
+        /// <summary>
+        /// Resolve
+        /// </summary>
+        /// <typeparam name="T">Type</typeparam>
+        /// <param name="key">key</param>
+        /// <param name="scope">Default scope</param>
+        /// <param name="param">params</param>
+        /// <returns>Resolved service</returns>
+        public virtual T Resolve<T>(string key = "", params Parameter[] param) where T : class
+        {
+            //no scope specified
+            var scope = Scope();
+            if (string.IsNullOrEmpty(key))
+            {
+                return scope.Resolve<T>(param);
+            }
+            return scope.ResolveKeyed<T>(key, param);
         }
 
         /// <summary>

@@ -1,14 +1,11 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
-
-namespace HighAvaNoDb.Zookeeper
+﻿namespace HighAvaNoDb.Zookeeper
 {
     public class ZkPath
     {
-        public static string CollectionName = "/redis_01";
+        /// <summary>
+        /// Default CollectionName
+        /// </summary>
+        public static string CollectionName = "01";
 
         public const string RootPath = "/clusterf";
 

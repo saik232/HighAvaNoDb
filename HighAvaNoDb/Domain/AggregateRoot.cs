@@ -1,12 +1,14 @@
 ﻿using System;
 using HighAvaNoDb.Events;
 using HighAvaNoDb.Common.Utils;
+using HighAvaNoDb.ServiceBus;
 
 namespace HighAvaNoDb.Domain
 {
     public abstract class AggregateRoot : IAggregateRoot
     {
         private Guid id = new Guid();
+        private readonly IEventBus eventBus;
 
         public Guid Id { get { return id; } set { id = value; } }
         public int Version { get; internal set; }
@@ -25,6 +27,7 @@ namespace HighAvaNoDb.Domain
         {
             dynamic d = this;
             d.Handle(Converter.ChangeTo(@event, @event.GetType()));
+            eventBus.Publish(@event);
         }
     }
 }

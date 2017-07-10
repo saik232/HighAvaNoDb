@@ -4,110 +4,77 @@ using System.Collections.Concurrent;
 using HighAvaNoDb.Model;
 using HighAvaNoDb.ServiceBus;
 using HighAvaNoDb.Events;
+using System.Linq;
+using System.Collections.Generic;
 
 namespace HighAvaNoDb.Infrastructure.Caching
 {
-    ///待改正，shard分组
     /// <summary>
     /// RedisCacheManager
     /// </summary>
     public class RedisCacheManager : ICacheManager
     {
         #region Fields
-        //一组连接，每一个分片组一个ConnectionWrapper
-        private ConcurrentDictionary<string, RedisConnectionWrapper> connectionWrappers;
-        private readonly IEventBus eventBus;
+        private RedisConnectionWrapper connectionWrapper;
+        private string host;
+        private int port;
+        //private readonly IEventBus eventBus;
         #endregion
 
         #region Ctor
-        public RedisCacheManager(IEventBus eventBus)
+        public RedisCacheManager(string connectionString)
         {
-            connectionWrappers = new ConcurrentDictionary<string, RedisConnectionWrapper>();
-            this.eventBus = eventBus;
-        }
+            connectionWrapper = new RedisConnectionWrapper(connectionString);
 
-        #endregion
-
-        #region Utility 
-        private void ensureCacheServerConnected(ServerInfo inst)
-        {
-            if (!connectionWrappers.ContainsKey(inst.Id))
+            List<string[]> sel = connectionString.Split(new char[] { ';' }).
+                 AsQueryable().Where(x => x.Contains(":")).Select(x => x.Split(new char[] { ':' })).ToList();
+            if (sel != null && sel.Count > 0 && sel[0].Length > 1)
             {
-                AddCacheServer(inst);
+                host = sel[0][0];
+                int.TryParse(sel[0][1], out port);
             }
         }
         #endregion
 
         #region Methods
 
-        public void Slave(ServerInfo serverMaster, ServerInfo serverSlave)
+        //public void Slave(ServerInfo serverMaster, ServerInfo serverSlave)
+        //{
+        //    //make sure connections are exist
+
+        //    IServer serverM = connectionWrappers[serverMaster.Id].Server(serverMaster.Host, serverMaster.Port);
+        //    IServer serverS = connectionWrappers[serverSlave.Id].Server(serverSlave.Host, serverSlave.Port);
+        //    serverS.SlaveOf(serverM.EndPoint);
+
+        //    //eventBus.Publish(new ItemSlavedOfEvent(new Guid(), serverMaster.Id,serverMaster.Host,serverMaster.Port,
+        //    //    serverSlave.Id,serverSlave.Host,serverSlave.Port,-1));
+        //}
+
+        public void BeMaster()
         {
-            //make sure connections are exist
-            ensureCacheServerConnected(serverMaster);
-            ensureCacheServerConnected(serverSlave);
-
-            IServer serverM = connectionWrappers[serverMaster.Id].Server(serverMaster.Host, serverMaster.Port);
-            IServer serverS = connectionWrappers[serverSlave.Id].Server(serverSlave.Host, serverSlave.Port);
-            serverS.SlaveOf(serverM.EndPoint);
-
-            eventBus.Publish(new ItemSlavedOfEvent(new Guid(), serverMaster.Id,serverMaster.Host,serverMaster.Port,
-                serverSlave.Id,serverSlave.Host,serverSlave.Port,-1));
-        }
-
-        public void BeMaster(ServerInfo inst)
-        {
-            ensureCacheServerConnected(inst);
-            IServer server = connectionWrappers[inst.Id].Server(inst.Host, inst.Port);
+            IServer server = GetServer();
             server.MakeMaster(ReplicationChangeOptions.All);
 
-            eventBus.Publish(new ItemSlavedOfNoneEvent(new Guid(), inst.Id, inst.Host, inst.Port, -1));
+            //eventBus.Publish(new ItemSlavedOfNoneEvent(new Guid(), inst.Id, inst.Host, inst.Port, -1));
         }
 
-        public TimeSpan Ping(ServerInfo inst)
+        public TimeSpan Ping()
         {
-            ensureCacheServerConnected(inst);
-            IServer server = connectionWrappers[inst.Id].Server(inst.Host, inst.Port);
+            IServer server = GetServer();
             TimeSpan ts = server.Ping();
-            eventBus.Publish(new ItemPingedEvent(new Guid(), inst.Id, inst.Host, inst.Port,ts.Milliseconds, -1));
+            //eventBus.Publish(new ItemPingedEvent(new Guid(), inst.Id, inst.Host, inst.Port,ts.Milliseconds, -1));
             return ts;
         }
 
-        public void AddCacheServer(ServerInfo inst)
+        public IServer GetServer()
         {
-            RedisConnectionWrapper connectionWrapper = new RedisConnectionWrapper(string.Format("{0}:{1}", inst.Host, inst.Port));
-            connectionWrappers.TryAdd(inst.Id, connectionWrapper);
-        }
-        public void RemoveCacheServer(ServerInfo inst)
-        {
-            if (connectionWrappers.ContainsKey(inst.Id))
-            {
-                connectionWrappers[inst.Id].Dispose();
-                RedisConnectionWrapper connectionWrapper;
-                connectionWrappers.TryRemove(inst.Id,out connectionWrapper);
-            }
-        }
-
-        public void RemoveCacheServer(string id)
-        {
-            if (connectionWrappers.ContainsKey(id))
-            {
-                connectionWrappers[id].Dispose();
-                RedisConnectionWrapper connectionWrapper;
-                connectionWrappers.TryRemove(id, out connectionWrapper);
-            }
+            return connectionWrapper.Server(host, port);
         }
 
         public void Dispose()
         {
-            foreach (var item in connectionWrappers)
-            {
-                item.Value.Dispose();
-            }
-
-            connectionWrappers.Clear();
+            connectionWrapper.Dispose();
         }
-
-
         #endregion
 
     }

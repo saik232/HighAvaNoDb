@@ -1,5 +1,7 @@
 ﻿using HighAvaNoDb.Common;
 using HighAvaNoDb.Domain;
+using HighAvaNoDb.Infrastructure.Caching;
+using HighAvaNoDb.Repository;
 using HighAvaNoDb.Zookeeper;
 using HighAvaNoDb.Zookeeper.ZookeeperNode;
 using Microsoft.VisualStudio.TestTools.UnitTesting;
@@ -13,14 +15,33 @@ namespace HighAvaNoDb.Tests.Zookeeper
     public class LeaderContextTests
     {
         [TestMethod]
+        public void Can_JoinElection()
+        {
+            IZooKeeper zookeeper = new ZooKeeper("127.0.0.1:2181", new TimeSpan(0, 60, 0), null);
+            Server server = new Server() { ShardName = "shard1", Host = "127.0.0.1", Port = 6379, Path = ZkPath.ShardsPath(ZkPath.CollectionName) };
+
+            ServerInstances si = new ServerInstances();
+            si.Add(new ServerInst(server.Host,server.Port));
+
+            LeaderContext context = new LeaderContext(zookeeper, server);
+            context.JoinElection();
+        }
+
+        [TestMethod]
         public void Can_JoinElectionOnceMore()
         {
             //Register g zooKeeper
             //HAContext.Current.DynamicDependencyRegistry.RegisterZooKeeper("127.0.0.1:2181", new TimeSpan(0, 60, 0));
             //HAContext.Current.ContainerManager.ReBuildContainer();
 
+
+
             IZooKeeper zookeeper = new ZooKeeper("127.0.0.1:2181", new TimeSpan(0, 60, 0), null);
-            Server server = new Server() { ShardName="shard1",Host = "127.0.0.1", Port = 6379 ,Path=ZkPath.ShardsPath(ZkPath.CollectionName) };
+            Server server = new Server() { ShardName = "shard1", Host = "127.0.0.1", Port = 6379, Path = ZkPath.ShardsPath(ZkPath.CollectionName) };
+
+            IServerInstRepository siRepos = HAContext.Current.ContainerManager.Resolve<IServerInstRepository>();
+            siRepos.Add(server.Host, server.Port);
+
             LeaderContext context = new LeaderContext(zookeeper, server);
             context.JoinElection();
             context.JoinElection();

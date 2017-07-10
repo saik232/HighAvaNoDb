@@ -43,7 +43,7 @@ namespace HighAvaNoDb
         { 
             foreach (var item in items)
             {
-                if (item.Value.Server.ShardName == shardName)
+                if (item.Value.ServerInfo.ShardName == shardName)
                 {
                     yield return item.Value;
                 }

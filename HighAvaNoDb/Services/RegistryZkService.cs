@@ -28,9 +28,9 @@ namespace HighAvaNoDb.Services
             {
                 log.Info(inst);
                 ShardBuilder builder = new ShardBuilder();
-                Shard shard = builder.AddServer(inst.Server).Build();
+                Shard shard = builder.AddServer(inst.ServerInfo).Build();
                 //多次对每个server初始化有没有问题？
-                LeaderContext leaderContext = new LeaderContext(zookeeper, inst.Server);
+                LeaderContext leaderContext = new LeaderContext(zookeeper, inst.ServerInfo);
                 leaderContext.JoinElection();
             }
         }
@@ -43,7 +43,7 @@ namespace HighAvaNoDb.Services
             {
                 log.Info(inst);
                 //多次对每个server初始化有没有问题？
-                LeaderContext leaderContext = new LeaderContext(zookeeper, inst.Server);
+                LeaderContext leaderContext = new LeaderContext(zookeeper, inst.ServerInfo);
                 leaderContext.CancelElection();
             }
         }

@@ -1,14 +1,15 @@
 using HighAvaNoDb.Model;
+using StackExchange.Redis;
 using System;
 
 namespace HighAvaNoDb.Infrastructure.Caching
 {
     public interface ICacheManager : IDisposable
     {
-        void Slave(ServerInfo serverMaster, ServerInfo serverSlave);
+        void BeMaster();
 
-        void BeMaster(ServerInfo server);
+        TimeSpan Ping();
 
-        TimeSpan Ping(ServerInfo inst);
+        IServer GetServer();
     }
 }

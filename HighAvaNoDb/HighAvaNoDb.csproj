@@ -88,6 +88,7 @@
     <Compile Include="Domain\IEntity.cs" />
     <Compile Include="Domain\Mementos\BaseMemento.cs" />
     <Compile Include="Domain\Range.cs" />
+    <Compile Include="Infrastructure\Caching\RedisCacheManager_V.cs" />
     <Compile Include="Tasks\ScheduleTask.cs" />
     <Compile Include="Domain\Server.cs" />
     <Compile Include="Domain\ServerInst.cs" />

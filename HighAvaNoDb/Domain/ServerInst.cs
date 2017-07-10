@@ -4,59 +4,69 @@ using HighAvaNoDb.Infrastructure.Caching;
 using HighAvaNoDb.Model;
 using StackExchange.Redis;
 using System;
+using System.Collections.Generic;
 
 namespace HighAvaNoDb.Domain
 {
     public partial class ServerInst : AggregateRoot
     {
-        private ICacheManager cacheManager;
-        private IServer cacheServer;
+        public ICacheManager cacheManager { private set; get; }
 
         #region ctor
         public ServerInst(string host, int port, params string[] param)
+            : this(host, port)
         {
             string separetor = ",";
-            server = new Server() { Host = host, Port = port, paramStr = String.Join(separetor, param) };
-            cacheManager = HAContext.Current.ContainerManager.Resolve<ICacheManager>();
+            ServerInfo.paramStr = String.Join(separetor, param);
         }
+        public ServerInst(string host, int port)
+        {
+            ServerInfo = new Server() { Host = host, Port = port };
+            cacheManager = HAContext.Current.ContainerManager.Resolve<ICacheManager>(
+                new Dictionary<string, object>() { { "connectionString", String.Format("{0}:{1}", host, port) } });
+        }
+
         #endregion
 
         #region Properties
 
-        private Server server;
-        public Server Server { get { return server; } }
+        public Server ServerInfo {private set; get; }
 
         //
         public bool IsConnected { set; get; }
         #endregion
 
         #region Method
-        public void Slave(Server master)
+
+        public IServer Server
         {
-            ServerInfo siM = new ServerInfo() { Host = server.Host, Port = server.Port };
-            ServerInfo siS = new ServerInfo() { Host = server.Host, Port = server.Port };
-            cacheManager.Slave(siM, siS);
-            ApplyChange(new ItemSlavedOfEvent(Guid.NewGuid(), master.Id.ToString(),master.Host,master.Port,
-                Id.ToString(), server.Host, server.Port, -1));
+            get
+            {
+                return cacheManager.GetServer();
+            }
+        }
+        public void SlaveOf(ServerInst master)
+        {
+            this.Server.SlaveOf(master.Server.EndPoint);
+            ApplyChange(new ItemSlavedOfEvent(Guid.NewGuid(), master.Id, master.ServerInfo.Host, master.ServerInfo.Port,
+                Id, ServerInfo.Host, ServerInfo.Port, -1));
         }
 
         public void BeMaster()
         {
-            ServerInfo si = new ServerInfo() { Host = server.Host, Port = server.Port };
-            cacheManager.BeMaster(si);
-            ApplyChange(new ItemSlavedOfNoneEvent(Guid.NewGuid(), Id.ToString(), server.Host, server.Port, -1));
+            cacheManager.BeMaster();
+            ApplyChange(new ItemSlavedOfNoneEvent(Guid.NewGuid(), Id, ServerInfo.Host, ServerInfo.Port, -1));
         }
 
         public TimeSpan Ping()
         {
-            ServerInfo si = new ServerInfo() { Host = server.Host, Port = server.Port };
-            TimeSpan ts = cacheManager.Ping(si);
-            ApplyChange(new ItemPingedEvent(Guid.NewGuid(), Id.ToString(), server.Host, server.Port, ts.Milliseconds, -1));
+            TimeSpan ts = cacheManager.Ping();
+            ApplyChange(new ItemPingedEvent(Guid.NewGuid(), Id.ToString(), ServerInfo.Host, ServerInfo.Port, ts.Milliseconds, -1));
             return ts;
         }
         public override string ToString()
         {
-            return String.Format("Id={0},Host={1},Port={2}",Id,server.Host,server.Port);
+            return String.Format("Id={0},Host={1},Port={2}", Id, ServerInfo.Host, ServerInfo.Port);
         }
         #endregion
     }

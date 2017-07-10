@@ -18,24 +18,24 @@ namespace HighAvaNoDb.Test.Domain
         [TestMethod]
         public void Can_Create_ServerInst()
         {
-            inst.Server.ShouldNotBeNull();
-            inst.Server.Host.ShouldEqual("127.0.0.1");
-            inst.Server.Port.ShouldEqual(8081);
-            inst.Server.paramStr.ShouldEqual("test1,test2");
+            inst.ServerInfo.ShouldNotBeNull();
+            inst.ServerInfo.Host.ShouldEqual("127.0.0.1");
+            inst.ServerInfo.Port.ShouldEqual(8081);
+            inst.ServerInfo.paramStr.ShouldEqual("test1,test2");
         }
 
         [TestMethod]
         public void Test_Server_Data()
         {
-            inst.Server.Data.AssertContainsStringAs("NodeName");
-            inst.Server.Data.AssertContainsStringAs("Path");
+            inst.ServerInfo.Data.AssertContainsStringAs("NodeName");
+            inst.ServerInfo.Data.AssertContainsStringAs("Path");
         }
 
         [TestMethod]
         public void Test_ServerType()
         {
-            inst.Server.ShouldBe<INode>();
-            inst.Server.ShouldBe<AggregateRoot>();
+            inst.ServerInfo.ShouldBe<INode>();
+            inst.ServerInfo.ShouldBe<AggregateRoot>();
         }
 
     }

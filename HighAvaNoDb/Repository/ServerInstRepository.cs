@@ -22,7 +22,7 @@ namespace HighAvaNoDb.Repository
         {
             foreach (var item in serverInstances.Items)
             {
-                if (item.Server.Host == host && item.Server.Port == port)
+                if (item.ServerInfo.Host == host && item.ServerInfo.Port == port)
                 {
                     return item.Id;
                 }

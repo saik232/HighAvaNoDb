@@ -22,12 +22,12 @@ namespace HighAvaNoDb.CommandHandlers
             ServerInst inst = serverInstances.GetById(command.ServerId);
             inst.BeMaster();
 
-            foreach (var item in serverInstances.GetByShardName(inst.Server.ShardName))
+            foreach (var item in serverInstances.GetByShardName(inst.ServerInfo.ShardName))
             {
                 if (item.Id != inst.Id)
                 {
-                    HAContext.Current.CommandBus.Send(new SlaveOfCommand(Guid.NewGuid(),inst.Server.Id.ToString(),inst.Server.Host,inst.Server.Port,
-                        item.Server.Id.ToString(),item.Server.Host,item.Server.Port,-1));
+                    HAContext.Current.CommandBus.Send(new SlaveOfCommand(Guid.NewGuid(),inst.Id.ToString(),inst.ServerInfo.Host,inst.ServerInfo.Port,
+                        item.Id.ToString(),item.ServerInfo.Host,item.ServerInfo.Port,-1));
                 }
             }
         }

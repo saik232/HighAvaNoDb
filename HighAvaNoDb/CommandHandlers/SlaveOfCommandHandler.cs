@@ -4,15 +4,16 @@ using HighAvaNoDb.Commands;
 using HighAvaNoDb.Infrastructure.Caching;
 using HighAvaNoDb.Common;
 using HighAvaNoDb.Model;
+using HighAvaNoDb.Domain;
 
 namespace HighAvaNoDb.CommandHandlers
 {
     public class SlaveOfCommandHandler : ICommandHandler<SlaveOfCommand>
     {
-        IServerInstRepository  repository;
-        public SlaveOfCommandHandler(IServerInstRepository repository)
+        ServerInstances serverInstances;
+        public SlaveOfCommandHandler(ServerInstances serverInstances)
         {
-            this.repository = repository;
+            this.serverInstances = serverInstances;
         }
 
         public void Execute(SlaveOfCommand command)
@@ -22,10 +23,9 @@ namespace HighAvaNoDb.CommandHandlers
                 throw new ArgumentNullException("command");
             }
 
-            ICacheManager cacheManager = HAContext.Current.ContainerManager.Resolve<ICacheManager>();
-            ServerInfo ms = new ServerInfo() { Id = command.MasterId, Host = command.MasterHost, Port = command.MasterPort };
-            ServerInfo ss = new ServerInfo() { Id = command.SlaveId, Host = command.SlaveHost, Port = command.SlavePort };
-            cacheManager.Slave(ms, ss);
+            ServerInst master = serverInstances.GetById(command.MasterId);
+            ServerInst slave = serverInstances.GetById(command.SlaveId);
+            slave.SlaveOf(master);
         }
     }
 }

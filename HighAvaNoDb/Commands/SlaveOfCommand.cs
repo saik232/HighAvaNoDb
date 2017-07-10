@@ -5,8 +5,8 @@ namespace HighAvaNoDb.Commands
     public class SlaveOfCommand : Command
     {
         //server id
-        public string MasterId { get; private set; }
-        public string SlaveId { get; private set; }
+        public Guid MasterId { get; private set; }
+        public Guid SlaveId { get; private set; }
         public string MasterHost { get; private set; }
         public int MasterPort { get; private set; }
         public string SlaveHost { get; private set; }

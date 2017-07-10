@@ -1,5 +1,6 @@
 ﻿using Microsoft.VisualStudio.TestTools.UnitTesting;
 using Newtonsoft.Json;
+using Org.Apache.Zookeeper.Data;
 using System;
 using System.Collections.Generic;
 using System.Diagnostics;
@@ -8,10 +9,46 @@ using ZooKeeperNet;
 
 namespace HighAvaNoDb.Tests.HelperForZK
 {
+    /// <summary>
+    /// Don't use it. Watch the watches.
+    /// </summary>
     [TestClass]
     public class HelperForZK
     {
         IZooKeeper zookeeper = new ZooKeeper("127.0.0.1:2181", new TimeSpan(0, 60, 0), null);
+
+        [TestMethod]
+        public void DeleteAllNode( )
+        {
+            DeleteNode(null);
+        }
+
+
+        public void DeleteNode(string path)
+        {
+            //IEnumerable<string> names = zookeeper.GetChildren(path == null ? "/" : path, false);
+            //if (names != null)
+            //{
+            //    foreach (var name in names)
+            //    {
+            //        DeleteNode(path + "/" + name);
+            //    }
+            //  Stat  tat=  zookeeper.Exists(path, null);
+            //    zookeeper.Delete(path, tat.Version);
+            //}
+            //else
+            //{
+            //    Stat tat = zookeeper.Exists(path, null);
+            //    zookeeper.Delete(path, tat.Version);
+            //    return;
+            //}
+        }
+
+
+
+
+
+
         [TestMethod]
         public void Test()
         {

@@ -3,7 +3,10 @@ using System.Collections.Generic;
 
 namespace HighAvaNoDb.Domain
 {
-    public partial class Server : AggregateRoot, IEqualityComparer<Server>
+    /// <summary>
+    /// Value object
+    /// </summary>
+    public partial class Server : IEqualityComparer<Server>
     {
         //not null
         public string ShardName { set; get; }

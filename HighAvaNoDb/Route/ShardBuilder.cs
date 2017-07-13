@@ -13,6 +13,7 @@ namespace HighAvaNoDb.Route
         private Range range;
         private LiveState state;
         private Shard shard;
+        private string name;
 
         private List<Server> servers;
 
@@ -31,6 +32,7 @@ namespace HighAvaNoDb.Route
             shard.Range = this.range;
             shard.Servers = this.servers;
             shard.State = state;
+            shard.Name = name;
             return shard;
         }
 
@@ -57,6 +59,7 @@ namespace HighAvaNoDb.Route
             }
 
             servers.Add(server);
+            this.name = server.ShardName;
             return this;
         }
 
@@ -69,6 +72,12 @@ namespace HighAvaNoDb.Route
         public ShardBuilder Range(Range range)
         {
             this.range = range;
+            return this;
+        }
+
+        public ShardBuilder Name(string name)
+        {
+            this.name = name;
             return this;
         }
     }

@@ -4,7 +4,8 @@ using System;
 
 namespace HighAvaNoDb.Domain
 {
-    public partial class ServerInst : IHandle<ItemPingedEvent>, 
+    public partial class ServerInst : 
+        IHandle<ItemPingedEvent>, 
         IHandle<ItemSlavedOfNoneEvent>, 
         IHandle<ItemSlavedOfEvent>,
         IHandle<ItemZkRegisteredEvent>,
@@ -12,22 +13,22 @@ namespace HighAvaNoDb.Domain
     {
         public void Handle(ItemSlavedOfEvent e)
         {
-            throw new NotImplementedException();
+            IsLeader = false;
         }
 
         public void Handle(ItemZkUnRegisteredEvent e)
         {
-            throw new NotImplementedException();
+            IsZKRegistered = false;
         }
 
         public void Handle(ItemZkRegisteredEvent e)
         {
-            
+            IsZKRegistered = true;
         }
 
         public void Handle(ItemSlavedOfNoneEvent e)
         {
-            throw new NotImplementedException();
+            IsLeader = true;
         }
 
         public void Handle(ItemPingedEvent e)

@@ -11,6 +11,4 @@ namespace HighAvaNoDb.Route
 	{
 		public const string NAME = "HashBasedRouter";
 	}
-
-
 }

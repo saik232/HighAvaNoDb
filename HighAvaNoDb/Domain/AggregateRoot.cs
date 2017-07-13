@@ -2,6 +2,7 @@
 using HighAvaNoDb.Events;
 using HighAvaNoDb.Common.Utils;
 using HighAvaNoDb.ServiceBus;
+using HighAvaNoDb.Common;
 
 namespace HighAvaNoDb.Domain
 {
@@ -16,6 +17,7 @@ namespace HighAvaNoDb.Domain
 
         protected AggregateRoot()
         {
+            eventBus = HAContext.Current.ContainerManager.Resolve<IEventBus>();
         }
 
         protected void ApplyChange(Event @event)
@@ -26,8 +28,9 @@ namespace HighAvaNoDb.Domain
         private void ApplyChange(Event @event, bool isNew)
         {
             dynamic d = this;
-            d.Handle(Converter.ChangeTo(@event, @event.GetType()));
-            eventBus.Publish(@event);
+            var concreteEvent= Converter.ChangeTo(@event, @event.GetType());
+            d.Handle(concreteEvent);
+            eventBus.Publish(concreteEvent);
         }
     }
 }

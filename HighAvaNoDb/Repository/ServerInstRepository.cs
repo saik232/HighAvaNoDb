@@ -49,6 +49,12 @@ namespace HighAvaNoDb.Repository
 
         public bool IsZKRegistered(Guid id)
         {
+            ServerInst inst = serverInstances.GetById(id);
+            if (inst != null)
+            {
+                return inst.IsZKRegistered;
+            }
+
             throw new ServerInstNotExistsException(String.Format("Server is not exist.[id={0}]", id));
         }
 

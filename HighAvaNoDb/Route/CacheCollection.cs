@@ -18,7 +18,7 @@ namespace HighAvaNoDb.Route
         private readonly Router router;
         #endregion
 
-        public CacheCollection(string name, IDictionary<string, Shard> shards, IDictionary<string, object> props, Router router)
+        public CacheCollection(string name, IDictionary<string, Shard> shards, Router router)
         {
             if (string.IsNullOrWhiteSpace(name) || shards == null)
             {

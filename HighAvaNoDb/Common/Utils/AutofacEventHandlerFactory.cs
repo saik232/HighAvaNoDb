@@ -19,8 +19,11 @@ namespace HighAvaNoDb.Common.Utils
         private static IEnumerable<Type> GetHandlerType<T>() where T : Event
         {
             var handlers = typeof(IEventHandler<>).Assembly.GetExportedTypes()
-                .Where(x => x.GetInterfaces()
-                    .Any(a => a.IsGenericType && a.GetGenericTypeDefinition() == typeof(IEventHandler<>))).Where(h => h.GetInterfaces().Any(ii => ii.GetGenericArguments().Any(aa => aa == typeof(T)))).ToList();
+                 .Where(x => x.GetInterfaces()
+                     .Any(a => a.IsGenericType && a.GetGenericTypeDefinition() == typeof(IEventHandler<>)))
+                     .Where(h => h.GetInterfaces()
+                         .Any(ii => ii.GetGenericArguments()
+                             .Any(aa => aa == typeof(T)))).ToList();
 
             return handlers;
         }

@@ -4,4 +4,9 @@
     {
         int Hash(string key);
     }
+
+    public class SimpleHashAlgorithm
+    {
+    }
+
 }

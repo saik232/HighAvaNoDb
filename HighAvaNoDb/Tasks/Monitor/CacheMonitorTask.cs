@@ -103,7 +103,8 @@ namespace HighAvaNoDb.Tasks.Monitor
             }
             catch (KeeperException ex)
             {
-                
+                logger.Error(string.Format("[Monitor]error [{0}:{1}]", host, port), ex);
+                ++failTimes;
             }
             catch (Exception ex)
             {

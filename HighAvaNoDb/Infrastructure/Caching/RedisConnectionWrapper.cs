@@ -6,6 +6,7 @@ namespace HighAvaNoDb.Infrastructure.Caching
     public class RedisConnectionWrapper : IRedisConnectionWrapper
     {
         private readonly string connectionString;
+        private readonly ConfigurationOptions options;
 
         private volatile ConnectionMultiplexer connection;
         private readonly object _lock = new object();
@@ -13,6 +14,11 @@ namespace HighAvaNoDb.Infrastructure.Caching
         public RedisConnectionWrapper(string connectionString)
         {
             this.connectionString = connectionString;
+        }
+
+        public RedisConnectionWrapper(ConfigurationOptions options)
+        {
+            this.options = options;
         }
 
         private ConnectionMultiplexer GetConnection()
@@ -27,7 +33,14 @@ namespace HighAvaNoDb.Infrastructure.Caching
                 {
                     connection.Dispose();
                 }
-                connection = ConnectionMultiplexer.Connect(connectionString);
+                if (string.IsNullOrWhiteSpace(connectionString))
+                {
+                    connection = ConnectionMultiplexer.Connect(options);
+                }
+                else
+                {
+                    connection = ConnectionMultiplexer.Connect(connectionString);
+                }
             }
 
             return connection;

@@ -1,7 +1,6 @@
 ﻿using HighAvaNoDb.Common;
 using HighAvaNoDb.Events;
 using HighAvaNoDb.Infrastructure.Caching;
-using HighAvaNoDb.Model;
 using StackExchange.Redis;
 using System;
 using System.Collections.Generic;
@@ -14,26 +13,29 @@ namespace HighAvaNoDb.Domain
 
         #region ctor
         public ServerInst(string host, int port, params string[] param)
-            : this(host, port)
         {
-            string separetor = ",";
-            ServerInfo.paramStr = String.Join(separetor, param);
-        }
-        public ServerInst(string host, int port)
-        {
-            ServerInfo = new Server() { Host = host, Port = port };
+            ServerInfo = new Server();
+
+            if (param != null && param.Length > 0)
+            {
+                string separetor = ",";
+                ServerInfo.paramStr = String.Join(separetor, param);
+            }
+
             cacheManager = HAContext.Current.ContainerManager.Resolve<ICacheManager>(
-                new Dictionary<string, object>() { { "connectionString", String.Format("{0}:{1}", host, port) } });
+                new Dictionary<string, object>() { { "connectionString", String.Format("{0}:{1},{2}", host, port, ServerInfo.paramStr) } });
         }
 
         #endregion
 
         #region Properties
 
-        public Server ServerInfo {private set; get; }
+        public Server ServerInfo { private set; get; }
 
         //
-        public bool IsConnected { set; get; }
+        public bool IsConnected {private set; get; }
+        public bool IsLeader {private set; get; }
+        public bool IsZKRegistered { private set; get; }
         #endregion
 
         #region Method

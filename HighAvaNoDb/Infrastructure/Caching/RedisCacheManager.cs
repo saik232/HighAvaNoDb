@@ -16,23 +16,25 @@ namespace HighAvaNoDb.Infrastructure.Caching
     {
         #region Fields
         private RedisConnectionWrapper connectionWrapper;
-        private string host;
-        private int port;
+        private ConfigurationOptions options;
         //private readonly IEventBus eventBus;
         #endregion
 
         #region Ctor
+        /// <summary>
+        /// ConfigurationOptions
+        /// </summary>
+        /// <param name="connectionString"></param>
+        public RedisCacheManager(ConfigurationOptions options)
+        {
+            this.options = options;
+            connectionWrapper = new RedisConnectionWrapper(options);
+        }
+
         public RedisCacheManager(string connectionString)
         {
             connectionWrapper = new RedisConnectionWrapper(connectionString);
-
-            List<string[]> sel = connectionString.Split(new char[] { ';' }).
-                 AsQueryable().Where(x => x.Contains(":")).Select(x => x.Split(new char[] { ':' })).ToList();
-            if (sel != null && sel.Count > 0 && sel[0].Length > 1)
-            {
-                host = sel[0][0];
-                int.TryParse(sel[0][1], out port);
-            }
+            options = ConfigurationOptions.Parse(connectionString);
         }
         #endregion
 
@@ -68,7 +70,7 @@ namespace HighAvaNoDb.Infrastructure.Caching
 
         public IServer GetServer()
         {
-            return connectionWrapper.Server(host, port);
+            return connectionWrapper.Server(options.EndPoints[0]);
         }
 
         public void Dispose()

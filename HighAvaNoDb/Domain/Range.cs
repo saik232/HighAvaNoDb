@@ -5,8 +5,8 @@
     /// </summary>
     public class Range
     {
-        public int Min;
-        public int Max;
+        public long Min;
+        public long Max;
 
         public Range(int min, int max)
         {
@@ -14,7 +14,7 @@
             this.Max = max;
         }
 
-        public virtual bool Includes(int hash)
+        public virtual bool Includes(long hash)
         {
             return hash >= Min && hash <= Max;
         }
@@ -37,7 +37,7 @@
         public override int GetHashCode()
         {
 
-            return Max + Min;
+            return (int)(Max + Min);
         }
 
         public override bool Equals(object obj)

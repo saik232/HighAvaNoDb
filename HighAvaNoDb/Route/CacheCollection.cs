@@ -54,7 +54,7 @@ namespace HighAvaNoDb.Route
             }
         }
 
-        public virtual Shard getShard(string shardName)
+        public virtual Shard GetShard(string shardName)
         {
             return shards[shardName];
         }
@@ -99,7 +99,6 @@ namespace HighAvaNoDb.Route
             }
         }
         #endregion
-
 
         #region IDictionary implement
 
@@ -224,6 +223,26 @@ namespace HighAvaNoDb.Route
         IEnumerator<KeyValuePair<string, Shard>> IEnumerable<KeyValuePair<string, Shard>>.GetEnumerator()
         {
             return shards.GetEnumerator();
+        }
+        #endregion
+
+        #region Method
+        public Shard this[int index]
+        {
+            get
+            {
+                int i = 0;
+                foreach (var item in activeShards)
+                {
+                    if (i == index)
+                    {
+                        return item.Value;
+                    }
+                    ++i;
+                }
+
+                return null;
+            }
         }
         #endregion
     }

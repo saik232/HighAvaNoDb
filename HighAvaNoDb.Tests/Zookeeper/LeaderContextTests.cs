@@ -121,5 +121,26 @@ namespace HighAvaNoDb.Tests.Zookeeper
             LeaderContext context2 = new LeaderContext(zookeeper2, server2);
             context2.JoinElection();
         }
+
+        [TestMethod]
+        public void Can_JoinElectionTwiceSep()
+        {
+            IZooKeeper zookeeper1 = new ZooKeeper("127.0.0.1:2181", new TimeSpan(0, 60, 0), null);
+            IZooKeeper zookeeper2 = new ZooKeeper("127.0.0.1:2181", new TimeSpan(0, 60, 0), null);
+            Server server = new Server()
+            {
+                ShardName = "shard1",
+                Host = "127.0.0.1",
+                Port = 6369,
+                paramStr = "allowAdmin=true",
+                Path = ZkPath.ShardsPath(ZkPath.CollectionName)
+            };
+
+            ServerInstances si = new ServerInstances();
+            si.Add(new ServerInst(server.Host, server.Port, "allowAdmin=true"));
+
+            //LeaderContext context = new LeaderContext(zookeeper, server);
+            //context.JoinElection();
+        }
     }
 }

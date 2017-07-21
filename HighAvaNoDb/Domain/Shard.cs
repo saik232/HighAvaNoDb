@@ -9,6 +9,9 @@ namespace HighAvaNoDb.Domain
     public class Shard : AggregateRoot
     {
         public string Name { set; get; }
+        /// <summary>
+        /// 先不使用Range
+        /// </summary>
         public Range Range { get; set; }
         public static object ACTIVE { get; set; }
         public LiveState State { get; set; }

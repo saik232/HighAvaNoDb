@@ -6,7 +6,7 @@ namespace HighAvaNoDb.Domain
     /// <summary>
     /// Value object
     /// </summary>
-    public partial class Server : IEqualityComparer<Server>
+    public partial class Server : IEqualityComparer<Server>, ICloneable
     {
         //not null
         public string ShardName { set; get; }
@@ -30,7 +30,28 @@ namespace HighAvaNoDb.Domain
         //may be a litte complexed
         public int GetHashCode(Server obj)
         {
+            if (String.IsNullOrWhiteSpace(obj.Host))
+            {
+                int intHost;
+                if (int.TryParse(obj.Host.Replace(".", ""), out intHost))
+                {
+                    return obj.Port + intHost;
+                }
+            }
             return obj.Port;
+        }
+
+        public object Clone()
+        {
+            Server ser = new Server();
+            ser.Host = this.Host;
+            ser.IsAlive = this.IsAlive;
+            ser.NodeName = this.NodeName;
+            ser.paramStr = this.paramStr;
+            ser.Path = this.Path;
+            ser.Port = this.Port;
+            ser.ShardName = this.ShardName;
+            return ser;
         }
     }
 }

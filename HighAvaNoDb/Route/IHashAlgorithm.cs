@@ -2,11 +2,6 @@
 {
     public interface IHashAlgorithm
     {
-        int Hash(string key);
+        long Hash(string key);
     }
-
-    public class SimpleHashAlgorithm
-    {
-    }
-
 }

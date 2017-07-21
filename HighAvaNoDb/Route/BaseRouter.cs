@@ -6,24 +6,24 @@ namespace HighAvaNoDb.Route
 {
     public abstract class BaseRouter : Router
     {
-        public IHashAlgorithm HhashAlgorithm { set; get; }
+        public abstract IHashAlgorithm HhashAlgorithm { set; get; }
 
         public override Shard GetTargetShard(string key, CacheCollection collection)
         {
-            int hash = ShardHash(key);
-            return hashToShard(hash, collection);
+            long hash = ShardHash(key);
+            return hashToShardNoRange(hash, collection);
         }
 
-        public virtual int ShardHash(string id)
+        public virtual long ShardHash(string id)
         {
             if (HhashAlgorithm == null)
             {
-                throw new NullReferenceException("hashAlgorithm is null.");
+                throw new NullReferenceException("HashAlgorithm is null.");
             }
             return HhashAlgorithm.Hash(id);
         }
 
-        protected virtual Shard hashToShard(int hash, CacheCollection collection)
+        protected virtual Shard hashToShard(long hash, CacheCollection collection)
         {
             foreach (Shard shard in collection.ActiveShards)
             {
@@ -33,6 +33,16 @@ namespace HighAvaNoDb.Route
                     return shard;
                 }
             }
+            throw new Exception("No active shard servicing hash code " + hash.ToString("x") + " in " + collection);
+        }
+
+        protected virtual Shard hashToShardNoRange(long hash, CacheCollection collection)
+        {
+            if (collection.ActiveShards != null && collection.ActiveShards.Count > 0)
+            {
+                return collection[(int)(hash % collection.ActiveShards.Count)];
+            }
+
             throw new Exception("No active shard servicing hash code " + hash.ToString("x") + " in " + collection);
         }
     }
